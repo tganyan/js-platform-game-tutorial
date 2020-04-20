@@ -21,6 +21,23 @@ let dy = -2;
 // Ball 
 const ballRadius = 10;
 
+// Bricks
+let bricks = [];
+let brickRowCount = 3;
+let brickColumnCount = 5;
+const brickWidth = 75;
+const brickHeight = 20;
+const brickPadding = 10;
+const brickOffsetTop = 30;
+const brickOffsetLeft = 30;
+
+for (let c = 0; c < brickColumnCount; c++) {
+	bricks[c] = [];
+	for (let r = 0; r < brickRowCount; r++) {
+		bricks[c][r] = { x: 0, y: 0 };
+	}
+}
+
 // Functions
 const drawBall = () => {
 	ctx.beginPath();
@@ -38,8 +55,25 @@ const drawPaddle = () => {
 	ctx.closePath();
 }
 
+const drawBricks = () => {
+	for (let c = 0; c < brickColumnCount; c++) {
+		for (let r = 0; r < brickRowCount; r++) {
+			const brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
+			const brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
+			bricks[c][r].x = brickX;
+			bricks[c][r].y = brickY;
+			ctx.beginPath();
+			ctx.rect(brickX, brickY, brickWidth, brickHeight);
+			ctx.fillStyle = '#0095dd';
+			ctx.fill();
+			ctx.closePath();
+		}
+	}
+}
+
 const draw = () => {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	drawBricks();
 	drawBall();
 	drawPaddle();
 	x += dx;
@@ -56,8 +90,8 @@ const draw = () => {
 		if (x > paddleX && x < paddleX + paddleWidth) {
 			dy = -(dy + 1);
 		} else {
-			alert('GAME OVER, MAN! GAME OVER!!!');
-			document.location.reload();
+			// alert('GAME OVER, MAN! GAME OVER!!!');
+			// document.location.reload();
 			clearInterval(interval);
 		}
 	}
