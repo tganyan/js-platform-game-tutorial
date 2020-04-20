@@ -26,6 +26,9 @@ let ballColor = ballColors[0];
 // Score
 let score = 0;
 
+// Lives
+let lives = 3;
+
 // Bricks
 let bricks = [];
 let brickRowCount = 3;
@@ -48,6 +51,12 @@ const drawScore = () => {
 	ctx.font = '16px Arial';
 	ctx.fillStyle = '0095dd';
 	ctx.fillText(`Score: ${score}`, 8, 20);
+}
+
+const drawLives = () => {
+	ctx.font = '16px Arial';
+	ctx.fillStyle = '0095dd';
+	ctx.fillText(`Lives: ${lives}`, canvas.width - 65, 20);
 }
 
 const drawBall = (fill) => {
@@ -90,6 +99,7 @@ const draw = () => {
 	drawBall();
 	drawPaddle();
 	drawScore();
+	drawLives();
 	collisionDetection();
 	x += dx;
 	y += dy;
@@ -105,9 +115,18 @@ const draw = () => {
 		if (x > paddleX && x < paddleX + paddleWidth) {
 			dy = -(dy + 1);
 		} else {
-			alert('GAME OVER, MAN! GAME OVER!!!');
-			document.location.reload();
-			clearInterval(interval);
+			lives--;
+
+			if (!lives) {
+				alert('GAME OVER, MAN! GAME OVER!!!');
+				document.location.reload();
+			} else {
+				x = canvas.width / 2;
+				y = canvas.height - 30;
+				dx = 2;
+				dy = -2;
+				paddleX = (canvas.width - paddleWidth) / 2;
+			}
 		}
 	}
 
@@ -124,6 +143,8 @@ const draw = () => {
 			paddleX = 0;
 		}
 	}
+
+	requestAnimationFrame(draw);
 }
 
 const keyDownHandler = (event) => {
@@ -142,6 +163,14 @@ const keyUpHandler = (event) => {
 	}
 }
 
+const mouseMoveHandler = (event) => {
+	const relativeX = event.clientX - canvas.offsetLeft;
+
+	if (relativeX > 0 && relativeX < canvas.width) {
+		paddleX = relativeX - paddleWidth / 2;
+	}
+}
+
 const collisionDetection = () => {
 	for (let c = 0; c < brickColumnCount; c++) {
 		for (let r = 0; r < brickRowCount; r ++) {
@@ -157,7 +186,7 @@ const collisionDetection = () => {
 					if (score === brickRowCount * brickColumnCount) {
 						alert('YOU WIN!');
 						document.location.reload();
-						clearInterval(interval);
+
 					}
 				}
 			}
@@ -165,7 +194,8 @@ const collisionDetection = () => {
 	}
 }
 
-const interval = setInterval(draw, 10);
+draw();
 
 document.addEventListener('keydown', keyDownHandler, false);
 document.addEventListener('keyup', keyUpHandler, false);
+document.addEventListener('mousemove', mouseMoveHandler, false);
