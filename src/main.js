@@ -20,6 +20,11 @@ let dy = -2;
 
 // Ball 
 const ballRadius = 10;
+const ballColors = ['#0095dd', '#31f349', '#e2844d', '#554dc7', '#2ed2c3'];
+let ballColor = ballColors[0];
+
+// Score
+let score = 0;
 
 // Bricks
 let bricks = [];
@@ -39,10 +44,16 @@ for (let c = 0; c < brickColumnCount; c++) {
 }
 
 // Functions
+const drawScore = () => {
+	ctx.font = '16px Arial';
+	ctx.fillStyle = '0095dd';
+	ctx.fillText(`Score: ${score}`, 8, 20);
+}
+
 const drawBall = (fill) => {
 	ctx.beginPath();
 	ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
-	ctx.fillStyle = '#0095dd';
+	ctx.fillStyle = ballColor;
 	ctx.fill();
 	ctx.closePath();
 }
@@ -78,6 +89,7 @@ const draw = () => {
 	drawBricks();
 	drawBall();
 	drawPaddle();
+	drawScore();
 	collisionDetection();
 	x += dx;
 	y += dy;
@@ -138,7 +150,15 @@ const collisionDetection = () => {
 			if (b.status === 1) {
 				if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
 					dy = - dy;
+					ballColor = ballColors[Math.floor(Math.random() * ballColors.length)];
 					b.status = 0;
+					score++;
+
+					if (score === brickRowCount * brickColumnCount) {
+						alert('YOU WIN!');
+						document.location.reload();
+						clearInterval(interval);
+					}
 				}
 			}
 		}
